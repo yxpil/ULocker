@@ -1,4 +1,10 @@
 # ULocker 测试说明
+- 测试完成：是（2026-10-04）
+- 测试日期：2026-10-04
+- 测试内容：单元测试覆盖 crypto 层（Argon2id/scrypt 派生、HKDF、AES-256-GCM 加解密、篡改/错误 AAD/错误密钥拒绝）、vault 容器全链路（建/开/解/验、分块流、截断篡改检出、重名拒绝、追加回滚、U盘绑定）、util（条目名规范化与穿越拒绝、containment、安全擦除）、drives、CLI 子命令端到端、PyQt6 GUI 信号与进度回调；注入测试覆盖路径穿越（../、绝对路径、盘符、UNC、NUL、Windows 保留设备名、混用反斜杠）与分块密码层攻击（块重排、跨文件密文移植、翻转字节均被 GCM/verify 检出）；钩子测试验证 progress 回调按序触发、回调抛异常被 `_Progress` 隔离不破坏主流程。涉及模块：ulocker/crypto、vault、util、drives、cli、gui。
+- 运行命令：python -m pytest tests/ -v（QT_QPA_PLATFORM=offscreen）
+- 测试框架：pytest（PyQt6 offscreen）
+- 模型：豆包（Doubao）生成
 
 ## 运行方式
 
