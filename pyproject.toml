@@ -1,0 +1,60 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ulocker"
+version = "1.0.0"
+description = "U 盘加密软件：把文件装进 AES-256-GCM 分块加密容器，并可绑定到指定 U 盘"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "yxpil", email = "hi@yxpil.com" }]
+keywords = [
+    "encryption",
+    "usb",
+    "usb-drive",
+    "aes-256-gcm",
+    "argon2id",
+    "vault",
+    "security",
+    "privacy",
+    "scrypt",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Environment :: Win32 (MS Windows)",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Topic :: Security :: Cryptography",
+    "Topic :: System :: Archiving",
+]
+dependencies = [
+    "cryptography>=42.0",
+    "argon2-cffi>=23.1",
+]
+
+[project.optional-dependencies]
+gui = ["PyQt6>=6.6"]
+dev = ["pytest>=7.4", "pyinstaller>=6.0"]
+
+[project.urls]
+Homepage = "https://github.com/yxpil/ULocker"
+Repository = "https://github.com/yxpil/ULocker"
+Issues = "https://github.com/yxpil/ULocker/issues"
+
+[project.scripts]
+ulocker = "ulocker.cli:main"
+
+[project.gui-scripts]
+ulocker-gui = "ulocker.gui:main"
+
+[tool.setuptools]
+packages = ["ulocker"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

@@ -1,0 +1,43 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+build/
+dist/
+*.egg-info/
+.eggs/
+.venv/
+venv/
+env/
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+.tox/
+
+# ---- 本项目产物 ----
+# 加密容器与中间文件绝对不要提交
+*.ulocker
+*.ulocker.tmp
+*.ulocker-part
+*.compact.tmp
+*.relocate.tmp
+*.rebuild.tmp
+/playground/
+
+# ---- 编辑器 / 系统 ----
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---- 环境与日志 ----
+.env
+.env.local
+*.local
+*.log
+npm-debug.log*

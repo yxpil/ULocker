@@ -1,0 +1,7 @@
+# ULocker 运行依赖
+#
+# 只用两个第三方库，都是密码学领域的标准实现：
+#   cryptography —— AES-256-GCM（走 OpenSSL，恒定时间实现）
+#   argon2-cffi  —— Argon2id 口令派生（抗 GPU/ASIC 暴力破解）
+cryptography>=42.0
+argon2-cffi>=23.1
