@@ -377,3 +377,15 @@ ULocker/
 ## 许可证
 
 MIT © 2026 yxpil
+
+---
+
+<div align="center">
+
+<a href="https://github.com/yxpil/ULocker">
+  <img width="100%" src="https://alittlecatgirlpanel.yxp.hk/card?repo=yxpil/ULocker" alt="gh-card · yxpil/ULocker" />
+</a>
+
+<sub>Powered by <a href="https://alittlecatgirlpanel.yxp.hk"><b>gh-card</b></a> · 粉色手写体 README 仓库名片</sub>
+
+</div>
