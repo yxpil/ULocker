@@ -1,0 +1,113 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: build ${{ matrix.asset }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            asset: win-x64
+            archive: zip
+          - os: ubuntu-22.04
+            asset: linux-x86_64
+            archive: tar.gz
+          - os: macos-14
+            asset: macos-arm64
+            archive: tar.gz
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Qt runtime libs (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libegl1 libgl1
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[gui,dev]"
+
+      - name: Test
+        env:
+          QT_QPA_PLATFORM: offscreen
+          NO_COLOR: "1"
+        run: python -m pytest tests -q
+
+      - name: Build single-file executables
+        run: python scripts/build_exe.py
+
+      - name: Package
+        shell: bash
+        run: |
+          set -euo pipefail
+          PKG="ULocker-${GITHUB_REF_NAME}-${{ matrix.asset }}"
+          mkdir -p "out/$PKG"
+          cp -r dist/. "out/$PKG/"
+          cp README.md CHANGELOG.md LICENSE TESTING.md "out/$PKG/"
+          cd out
+          if [ "${{ matrix.archive }}" = "zip" ]; then
+            7z a -tzip "$PKG.zip" "./$PKG/*" >/dev/null
+          else
+            tar -czf "$PKG.tar.gz" "$PKG"
+          fi
+          rm -rf "$PKG"
+          ls -lh
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist-${{ matrix.asset }}
+          path: out/*
+
+  publish:
+    name: publish
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Checksums
+        run: cd dist && sha256sum *.zip *.tar.gz > SHA256SUMS.txt
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/*.zip
+            dist/*.tar.gz
+            dist/SHA256SUMS.txt
+          generate_release_notes: true
+          body: |
+            ## ULocker ${{ github.ref_name }}
+
+            U 盘加密容器：文件名、目录结构与内容全部加密，可绑定 U 盘卷序列号。
+            压缩包内含两个单文件程序：
+
+            - `ulocker` / `ulocker.exe` —— 命令行版
+            - `ULocker` / `ULocker.exe` —— 图形界面版（macOS 为 `ULocker.app`）
+
+            | 平台 | 文件 |
+            |---|---|
+            | Windows x64 | `ULocker-*-win-x64.zip` |
+            | Linux x64 | `ULocker-*-linux-x86_64.tar.gz` |
+            | macOS Apple Silicon | `ULocker-*-macos-arm64.tar.gz` |
+
+            可执行文件未签名：macOS 首次运行需在「隐私与安全性」中放行（或
+            `xattr -dr com.apple.quarantine ULocker.app`），Windows 可能弹出 SmartScreen 提示。
+            完整变更见仓库中的 `CHANGELOG.md`，同页附 `SHA256SUMS.txt` 供校验。
