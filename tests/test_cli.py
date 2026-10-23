@@ -54,6 +54,10 @@ class TestBasic:
         assert isinstance(payload, list)
 
     def test_drives_text(self, capsys) -> None:
+        from ulocker.drives import list_drives
+
+        if not list_drives():
+            pytest.skip("当前环境没有可枚举的卷")
         code, out, _ = run(capsys, "drives", "--no-color")
         assert code == EXIT_OK
         assert "挂载点" in out
