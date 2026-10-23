@@ -82,7 +82,9 @@ def safe_relative_name(name: str) -> str:
             # Windows 会静默去掉结尾的空格和点，可能导致写入到意料之外的名字
             raise PathSafetyError(f"条目名以空格或点结尾：{name!r}")
         stem = segment.split(".")[0].upper()
-        if is_windows() and stem in _WINDOWS_RESERVED:
+        # 容器可能在任何平台解开，保留名必须无条件拒绝，否则 Linux 上放行的
+        # CON/NUL 等条目到 Windows 会写到意外位置。
+        if stem in _WINDOWS_RESERVED:
             raise PathSafetyError(f"条目名使用了系统保留字：{name!r}")
         parts.append(segment)
 
